@@ -1,0 +1,7 @@
+### Gradle template
+.gradle
+**/build/
+!src/**/build/
+
+### Idea
+.idea
