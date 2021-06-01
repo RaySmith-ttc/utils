@@ -1,29 +1,35 @@
-import org.gradle.internal.impldep.org.junit.Before
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
 import ru.raysmith.utils.EndWordForNumNumberSide
 import ru.raysmith.utils.endWordForNum
 import ru.raysmith.utils.endWordForNumWithNumber
+import kotlin.test.assertEquals
 
 class EndWordTest {
 
-    @Test fun endWordsIsCorrect() {
-        println("Testing...")
+    @Test
+    fun endWordsIsCorrect() {
         val titles = listOf("фотография", "фотографии", "фотографий")
-        assertTrue { endWordForNum(1, titles) == "фотография" }
-        assertTrue { endWordForNum(3, titles) == "фотографии" }
-        assertTrue { endWordForNum(10, titles) == "фотографий" }
+        assertAll("Окончания",
+                {
+                    assertEquals(endWordForNum(1, titles), "фотография")
+                    assertEquals(endWordForNum(3, titles), "фотографии")
+                    assertEquals(endWordForNum(10, titles), "фотографий")
+                    assertEquals(endWordForNum(-10, titles), "фотографий")
+                    assertEquals(endWordForNum(-3, titles), "фотографии")
+                    assertEquals(endWordForNum(-1, titles), "фотография")
+                    assertEquals(endWordForNum(0, titles), "фотографий")
+                }
+        )
     }
 
-    @Test fun endWordsWithNumberIsCorrect() {
+    @Test
+    fun endWordsWithNumberIsCorrectWithSide() {
         val titles = listOf("фотография", "фотографии", "фотографий")
-        assertTrue { endWordForNumWithNumber(1, titles) == "1 фотография" }
+        assertEquals(endWordForNumWithNumber(1, titles), "1 фотография")
+        assertEquals(endWordForNumWithNumber(1, titles, EndWordForNumNumberSide.LEFT), "1 фотография")
+        assertEquals(endWordForNumWithNumber(1, titles, EndWordForNumNumberSide.RIGHT), "фотография 1")
+        assertEquals(endWordForNumWithNumber(5, titles, EndWordForNumNumberSide.RIGHT), "фотографий 5")
     }
-
-    @Test fun endWordsWithNumberRightIsCorrect() {
-        val titles = listOf("фотография, в количестве", "фотографии, в количестве", "фотографий, в количестве")
-        assertTrue { endWordForNumWithNumber(1, titles, EndWordForNumNumberSide.RIGHT) == "фотография, в количестве 1" }
-    }
-
 }

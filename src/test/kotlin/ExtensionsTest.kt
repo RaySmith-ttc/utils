@@ -1,8 +1,10 @@
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import ru.raysmith.utils.format
 import ru.raysmith.utils.getParam
+import ru.raysmith.utils.orNullIf
 import java.net.URL
-import kotlin.test.assertSame
 
 class ExtensionsTest {
 
@@ -20,5 +22,11 @@ class ExtensionsTest {
     fun findUrlParam() {
         val url = URL("https://example.org?foo=bar&bar=foo")
         assert(url.getParam("foo") == "bar")
+    }
+
+    @Test
+    fun orNullIf() {
+        assertNull("test".orNullIf { true })
+        assertNotNull("test".orNullIf { false })
     }
 }

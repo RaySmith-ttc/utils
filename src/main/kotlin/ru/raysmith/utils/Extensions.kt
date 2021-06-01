@@ -38,7 +38,7 @@ fun LocalDate.toDate(zone: ZoneId = ZoneId.systemDefault()): Date {
  * Ищет запрошенный параметр запроса
  *
  * @param param параметр
- * @return значение параметра или null
+ * @return значение параметра или null, если параметр не найден
  * */
 fun URL.getParam(param: String): String? {
     this.query?.split("&")?.forEach { q ->
@@ -49,4 +49,9 @@ fun URL.getParam(param: String): String? {
         }
     }
     return null
+}
+
+/** Возвращает значение или null если условние не выполнено */
+inline fun <reified T> T?.orNullIf(predicate: (it: T) -> Boolean): T? {
+    return if (predicate(this as T)) null else this
 }

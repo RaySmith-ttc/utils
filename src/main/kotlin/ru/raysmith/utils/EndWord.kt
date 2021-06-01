@@ -1,5 +1,7 @@
 package ru.raysmith.utils
 
+import kotlin.math.absoluteValue
+
 private val cases = intArrayOf(2, 0, 1, 1, 1, 2)
 
 /**
@@ -26,9 +28,9 @@ fun endWordForNum(number: Int, titles: List<String>): String {
     require(titles.size == 3) { "Список исчеслений должен иметь 3 варианта" }
     return titles[
             if (number % 100 in 5..19) 2
-            else cases[
+            else cases[(
                     if (number % 10 < 5) number % 10
-                    else 5
+                    else 5).absoluteValue
             ]
     ]
 }
@@ -50,7 +52,11 @@ enum class EndWordForNumNumberSide {
  *
  * @return вариант исчесления вместе с числом.
  * */
-fun endWordForNumWithNumber(number: Int, titles: List<String>, numberSide: EndWordForNumNumberSide = EndWordForNumNumberSide.LEFT): String {
+fun endWordForNumWithNumber(
+    number: Int,
+    titles: List<String>,
+    numberSide: EndWordForNumNumberSide = EndWordForNumNumberSide.LEFT
+): String {
     return when(numberSide) {
         EndWordForNumNumberSide.LEFT -> "$number ${endWordForNum(number, titles)}"
         EndWordForNumNumberSide.RIGHT -> "${endWordForNum(number, titles)} $number"
