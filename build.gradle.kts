@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "ru.raysmith"
-    version = "1.0.0-rc.4"
+    version = "1.0.0-rc.5"
 
     tasks {
         withType<KotlinCompile> {
@@ -37,6 +37,17 @@ publishing {
             }
         }
     }
+
+//    publications {
+//        register("gpr", MavenPublication::class.java) {
+//            artifact(sourcer)
+//        }
+//    }
+}
+
+java {
+    @Suppress("UnstableApiUsage") withSourcesJar()
+    @Suppress("UnstableApiUsage") withJavadocJar()
 }
 
 val jupiterVersion = "5.4.2"
