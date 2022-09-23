@@ -1,10 +1,12 @@
+import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import ru.raysmith.utils.format
-import ru.raysmith.utils.getParam
-import ru.raysmith.utils.orNullIf
+import org.junit.jupiter.api.assertThrows
+import ru.raysmith.utils.*
 import java.net.URL
+import java.time.LocalTime
 
 class ExtensionsTest {
 
@@ -22,11 +24,35 @@ class ExtensionsTest {
     fun findUrlParam() {
         val url = URL("https://example.org?foo=bar&bar=foo")
         assert(url.getParam("foo") == "bar")
+        assert(url.getParam("no_contains") == null)
+        assert(url.getParam("") == null)
     }
 
     @Test
     fun orNullIf() {
         assertNull("test".orNullIf { true })
         assertNotNull("test".orNullIf { false })
+    }
+
+    @Test
+    fun inPeriod() {
+        val time = LocalTime.of(12, 0)
+
+        assertThat(time.inPeriod(LocalTime.of(10, 0), LocalTime.of(14, 0))).isEqualTo(true)
+        assertThat(time.inPeriod(LocalTime.of(10, 0), LocalTime.of(11, 0))).isEqualTo(false)
+        assertThat(time.inPeriod(LocalTime.of(20, 0), LocalTime.of(23, 0))).isEqualTo(false)
+        assertThat(time.inPeriod(LocalTime.of(20, 0), LocalTime.of(11, 0))).isEqualTo(false)
+        assertThat(time.inPeriod(LocalTime.of(12, 0), LocalTime.of(15, 0))).isEqualTo(true)
+        assertThat(time.inPeriod(LocalTime.of(10, 0), LocalTime.of(12, 0))).isEqualTo(true)
+    }
+
+    @Test
+    fun takeOrCut() {
+        assertThat("Hello world".takeOrCut(100)).isEqualTo("Hello world")
+        assertThat("Hello world".takeOrCut(5)).isEqualTo("Hello...")
+        assertThat("Hello world".takeOrCut(0)).isEqualTo("...")
+        assertThrows<IllegalArgumentException> {
+            "Hello world".takeOrCut(-1)
+        }
     }
 }

@@ -1,7 +1,7 @@
 package ru.raysmith.utils
 
 /**
- * Возвращет true если оба операнда не null
+ * Возвращает true если оба операнда не null
  * */
 infix fun Any?.notNull(x: Any?): Boolean {
     return if (this is Boolean) this && x != null
@@ -9,7 +9,7 @@ infix fun Any?.notNull(x: Any?): Boolean {
 }
 
 /**
- * Возвращет true если один за операндов не null
+ * Возвращает true если один из операндов не null
  * */
 infix fun Any?.orNotNull(x: Any?): Boolean {
     return if (this is Boolean) this || x != null
@@ -17,7 +17,15 @@ infix fun Any?.orNotNull(x: Any?): Boolean {
 }
 
 /**
- * Возвращет true если оба операнда null
+ * Возвращает true если один из операндов null
+ * */
+infix fun Any?.orNull(x: Any?): Boolean {
+    return if (this is Boolean) this || x == null
+    else this == null || x == null
+}
+
+/**
+ * Возвращает true если оба операнда null
  * */
 infix fun Any?.bothNull(x: Any?): Boolean {
     return if (this is Boolean) this && x == null

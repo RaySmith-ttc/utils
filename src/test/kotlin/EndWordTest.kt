@@ -1,4 +1,3 @@
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import ru.raysmith.utils.EndWordForNumNumberSide
@@ -30,6 +29,8 @@ class EndWordTest {
         assertEquals(endWordForNumWithNumber(1, titles), "1 фотография")
         assertEquals(endWordForNumWithNumber(1, titles, EndWordForNumNumberSide.LEFT), "1 фотография")
         assertEquals(endWordForNumWithNumber(1, titles, EndWordForNumNumberSide.RIGHT), "фотография 1")
+        assertEquals(endWordForNumWithNumber(1L, titles, EndWordForNumNumberSide.RIGHT), "фотография 1")
+        assertEquals(endWordForNumWithNumber(1.12, titles, EndWordForNumNumberSide.RIGHT), "фотография 1.12")
         assertEquals(endWordForNumWithNumber(5, titles, EndWordForNumNumberSide.RIGHT), "фотографий 5")
     }
 }
