@@ -2,26 +2,27 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.5.21"
+    kotlin("jvm") version "1.7.20"
     id("maven-publish")
 }
 
 allprojects {
     group = "ru.raysmith"
-    version = "1.2.6"
+    version = "1.4.0"
 
     tasks {
         withType<KotlinCompile> {
             kotlinOptions {
                 freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
-
-                sourceCompatibility = JavaVersion.VERSION_1_8.toString()
-                targetCompatibility = JavaVersion.VERSION_1_8.toString()
                 jvmTarget = JavaVersion.VERSION_1_8.toString()
             }
         }
         withType<Test> {
             useJUnitPlatform()
+        }
+
+        withType<PublishToMavenRepository> {
+            dependsOn(test)
         }
     }
 
@@ -44,17 +45,16 @@ publishing {
 }
 
 java {
-    @Suppress("UnstableApiUsage") withSourcesJar()
-    @Suppress("UnstableApiUsage") withJavadocJar()
+    withSourcesJar()
+    withJavadocJar()
 }
 
-val jupiterVersion = "5.8.2"
 dependencies {
-//    implementation(kotlin("stdlib", "1.6.10"))
-
+    val jupiterVersion = "5.9.0"
     testImplementation("org.junit.jupiter:junit-jupiter:$jupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.assertj:assertj-core:3.22.0")
+    testImplementation("org.assertj:assertj-core:3.23.1")
 }

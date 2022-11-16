@@ -82,6 +82,14 @@ inline fun <T> T.letIf(expression: Boolean, block: (T) -> T): T {
 }
 
 @OptIn(ExperimentalContracts::class)
+inline fun <T> T.letIf(expression: (it: T) -> Boolean, block: (T) -> T): T {
+    kotlin.contracts.contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return if (expression(this)) block(this) else this
+}
+
+@OptIn(ExperimentalContracts::class)
 inline fun <T> T.alsoIf(expression: Boolean, block: (T) -> Unit): T {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -91,11 +99,29 @@ inline fun <T> T.alsoIf(expression: Boolean, block: (T) -> Unit): T {
 }
 
 @OptIn(ExperimentalContracts::class)
+inline fun <T> T.alsoIf(expression: (it: T) -> Boolean, block: (T) -> Unit): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    if (expression(this)) block(this)
+    return this
+}
+
+@OptIn(ExperimentalContracts::class)
 inline fun <T> T.applyIf(expression: Boolean, block: T.() -> Unit): T {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     if (expression) block()
+    return this
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun <T> T.applyIf(expression: (it: T) -> Boolean, block: T.() -> Unit): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    if (expression(this)) block()
     return this
 }
 
@@ -110,6 +136,6 @@ inline fun <reified T> Boolean.outcome(whenTrue: T, whenFalse: T): T {
  *
  * @throws IllegalArgumentException if [n] is negative.
  * */
-fun String.takeOrCut(n: Int) = this.letIf(this.length > n) {
+fun String.takeOrCut(n: Int) = letIf(length > n) {
     "${it.take(n)}..."
 }
