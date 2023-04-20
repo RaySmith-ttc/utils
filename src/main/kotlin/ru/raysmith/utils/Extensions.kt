@@ -16,7 +16,7 @@ import kotlin.contracts.contract
  * */
 fun Double.format(digits: Int): String {
     require(digits >= 0) { "digits must be 0 or more" }
-    return "%.${digits}f".format(this)
+    return "%.${digits}f".format(Locale.ENGLISH, this)
 }
 
 fun Date.toLocalDateTime(zone: ZoneId = ZoneId.systemDefault()): LocalDateTime {
@@ -77,6 +77,7 @@ inline fun <T> T.ifNotEmpty(defaultValue: (T) -> T): T where T : CharSequence =
 inline fun <T> T.letIf(expression: Boolean, block: (T) -> T): T {
     kotlin.contracts.contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        returns() implies expression
     }
     return if (expression) block(this) else this
 }
@@ -93,6 +94,7 @@ inline fun <T> T.letIf(expression: (it: T) -> Boolean, block: (T) -> T): T {
 inline fun <T> T.alsoIf(expression: Boolean, block: (T) -> Unit): T {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        returns() implies expression
     }
     if (expression) block(this)
     return this
@@ -111,6 +113,7 @@ inline fun <T> T.alsoIf(expression: (it: T) -> Boolean, block: (T) -> Unit): T {
 inline fun <T> T.applyIf(expression: Boolean, block: T.() -> Unit): T {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        returns() implies expression
     }
     if (expression) block()
     return this

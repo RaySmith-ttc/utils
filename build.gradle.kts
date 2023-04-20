@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "ru.raysmith"
-    version = "1.4.0"
+    version = "1.4.3"
 
     tasks {
         withType<KotlinCompile> {
