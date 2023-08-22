@@ -28,11 +28,11 @@ fun endWordForNum(number: Number, titles: List<String>): String {
     val longNumber = number.toLong()
     require(titles.size == 3) { "Список исчислений должен иметь 3 варианта" }
     return titles[
-            if (longNumber % 100 in 5..19) 2
-            else cases[(
-                    if (longNumber % 10 < 5) longNumber % 10
-                    else 5).absoluteValue.toInt()
-            ]
+        if (longNumber % 100 in 5..19) 2
+        else cases[(
+                if (longNumber % 10 < 5) longNumber % 10
+                else 5).absoluteValue.toInt()
+        ]
     ]
 }
 
@@ -85,7 +85,9 @@ fun endWordForNumWithNumber(
  * @param numberSide сторона с которой будет добавлено число в результатирующей строке
  * @param withNum если *true* — будет добавлять чисто в результатирующую строку
  * */
-fun Number.endOfWord(titles: List<String>, numberSide: EndWordForNumNumberSide = EndWordForNumNumberSide.LEFT, withNum: Boolean = true): String {
+fun Number.endOfWord(
+    titles: List<String>, numberSide: EndWordForNumNumberSide = EndWordForNumNumberSide.LEFT, withNum: Boolean = true
+): String {
     return if (withNum) {
         when(numberSide) {
             EndWordForNumNumberSide.LEFT -> "$this ${endWordForNum(this, titles.toList())}"

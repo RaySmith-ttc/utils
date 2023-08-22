@@ -6,7 +6,7 @@ import ru.raysmith.utils.orNull
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class InfixMethodsTest {
+class InfixMethodsJvmTest {
 
     @Test
     fun notNull() {

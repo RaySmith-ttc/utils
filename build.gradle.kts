@@ -1,14 +1,51 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    `kotlin-dsl`
-    kotlin("jvm") version "1.7.20"
     id("maven-publish")
+    kotlin("multiplatform") version "1.9.0"
+}
+
+repositories {
+    mavenCentral()
+}
+
+kotlin {
+    jvm {
+        jvmToolchain(8)
+        withJava()
+        testRuns.named("test") {
+            executionTask.configure {
+                useJUnitPlatform()
+            }
+        }
+    }
+    js {
+        browser {
+            commonWebpackConfig(Action {
+                cssSupport {
+                    enabled.set(true)
+                }
+            })
+        }
+    }
+
+    sourceSets {
+        val commonMain by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+        val jvmMain by getting
+        val jvmTest by getting
+        val jsMain by getting
+        val jsTest by getting
+    }
 }
 
 allprojects {
     group = "ru.raysmith"
-    version = "1.4.3"
+    version = "2.0.0"
 
     tasks {
         withType<KotlinCompile> {
@@ -20,14 +57,9 @@ allprojects {
         withType<Test> {
             useJUnitPlatform()
         }
-
         withType<PublishToMavenRepository> {
-            dependsOn(test)
+            dependsOn(check)
         }
-    }
-
-    repositories {
-        mavenCentral()
     }
 }
 
@@ -42,19 +74,4 @@ publishing {
             }
         }
     }
-}
-
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
-dependencies {
-    val jupiterVersion = "5.9.0"
-    testImplementation("org.junit.jupiter:junit-jupiter:$jupiterVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
-
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.assertj:assertj-core:3.23.1")
 }

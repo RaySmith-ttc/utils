@@ -3,11 +3,10 @@ import ru.raysmith.utils.properties.PropertiesFactory
 import ru.raysmith.utils.properties.getOrNull
 import java.io.File
 import java.io.FileNotFoundException
-import java.nio.file.Path
 import java.nio.file.Paths
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class PropertiesTest {
+class PropertiesJvmTest {
 
     companion object {
         const val PROPERTIES_FILE = "test.properties"
@@ -30,7 +29,7 @@ class PropertiesTest {
 
     @Test
     fun propertyFromPath() {
-        val properties = PropertiesFactory.from(Paths.get("src/test/path", PROPERTIES_FILE))
+        val properties = PropertiesFactory.from(Paths.get("src/jvmTest/path", PROPERTIES_FILE))
         assert(properties["foo"] == "bar")
         assert(properties.toMap().size == 1)
     }
