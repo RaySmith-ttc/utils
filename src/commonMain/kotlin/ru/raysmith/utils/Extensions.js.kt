@@ -76,7 +76,7 @@ inline fun <T> T.applyIf(expression: (it: T) -> Boolean, block: T.() -> Unit): T
 }
 
 /** Returns the value corresponding to the outcome */
-inline fun <reified T> Boolean.outcome(whenTrue: T, whenFalse: T): T {
+fun <T> Boolean.outcome(whenTrue: T, whenFalse: T): T {
     return if (this) whenTrue else whenFalse
 }
 
