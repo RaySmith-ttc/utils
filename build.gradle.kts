@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("maven-publish")
-    kotlin("multiplatform") version "1.9.0"
+    kotlin("multiplatform") version "1.9.10"
 }
 
 repositories {
@@ -19,7 +19,7 @@ kotlin {
             }
         }
     }
-    js {
+    js(IR) {
         browser {
             commonWebpackConfig(Action {
                 cssSupport {
@@ -45,7 +45,7 @@ kotlin {
 
 allprojects {
     group = "ru.raysmith"
-    version = "2.0.1"
+    version = "2.1.0"
 
     tasks {
         withType<KotlinCompile> {
