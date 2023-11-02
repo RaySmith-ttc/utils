@@ -6,10 +6,16 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.util.*
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 actual fun Double.format(digits: Int): String {
     require(digits >= 0) { "digits must be 0 or more" }
-    return "%.${digits}f".format(Locale.ENGLISH, this)
+    if (digits == 0) return roundToInt().toString()
+
+    val p = 10.0.pow(digits)
+    return (Math.round(this * p) / p).toString()
+//    return "%.${digits}f".format(Locale.ENGLISH, this)
 }
 
 fun Date.toLocalDateTime(zone: ZoneId = ZoneId.systemDefault()): LocalDateTime {
