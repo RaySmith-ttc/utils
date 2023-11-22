@@ -24,8 +24,10 @@ class ExtensionsTest {
     @Test
     fun takeOrCut() {
         assertEquals("Hello world", "Hello world".takeOrCut(100))
-        assertEquals("Hello...", "Hello world".takeOrCut(5))
-        assertEquals("...", "Hello world".takeOrCut(0))
+        assertEquals("Hello…", "Hello world".takeOrCut(6))
+        assertEquals("Hello…", "Hello world".takeOrCut(5, countDots = false))
+        assertEquals("", "Hello world".takeOrCut(0))
+        assertEquals("…", "Hello world".takeOrCut(0, countDots = false))
         assertFails {
             "Hello world".takeOrCut(-1)
         }

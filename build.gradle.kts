@@ -45,7 +45,7 @@ kotlin {
 
 allprojects {
     group = "ru.raysmith"
-    version = "2.2.0"
+    version = "2.3.0"
 
     tasks {
         withType<KotlinCompile> {
