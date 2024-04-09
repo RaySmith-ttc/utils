@@ -30,9 +30,9 @@ fun endWordForNum(number: Number, titles: List<String>): String {
     return titles[
         if (longNumber % 100 in 5..19) 2
         else cases[(
-                if (longNumber % 10 < 5) longNumber % 10
-                else 5).absoluteValue.toInt()
-        ]
+            if (longNumber % 10 < 5) longNumber % 10
+            else 5
+        ).absoluteValue.toInt()]
     ]
 }
 

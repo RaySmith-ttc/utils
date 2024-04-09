@@ -15,7 +15,14 @@ actual fun Double.format(digits: Int): String {
 
     val p = 10.0.pow(digits)
     return (Math.round(this * p) / p).toString()
-//    return "%.${digits}f".format(Locale.ENGLISH, this)
+}
+
+actual fun Double.round(digits: Int): Double {
+    require(digits >= 0) { "digits must be positive" }
+    if (digits == 0) return roundToInt().toDouble()
+
+    val p = 10.0.pow(digits)
+    return (Math.round(this * p) / p)
 }
 
 fun Date.toLocalDateTime(zone: ZoneId = ZoneId.systemDefault()): LocalDateTime {
@@ -30,21 +37,7 @@ fun Date.toLocalDate(zone: ZoneId = ZoneId.systemDefault()): LocalDate {
         .toLocalDate()
 }
 
-fun LocalDateTime.toDate(zone: ZoneId = ZoneId.systemDefault()): Date {
-    return Date.from(this.atZone(zone).toInstant())
-}
-fun LocalDate.toDate(zone: ZoneId = ZoneId.systemDefault()): Date {
-    return Date.from(this.atStartOfDay().atZone(zone).toInstant())
-}
 
-fun LocalTime.inPeriod(start: LocalTime, end: LocalTime): Boolean {
-    return when {
-        start == end -> true
-        start < end -> this in start..end
-        start > end -> this >= start || this <= end
-        else -> false
-    }
-}
 
 /**
  * Ищет запрошенный параметр запроса
@@ -53,11 +46,12 @@ fun LocalTime.inPeriod(start: LocalTime, end: LocalTime): Boolean {
  * @return значение параметра или null, если параметр не найден
  * */
 fun URL.getParam(param: String): String? {
-    this.query?.split("&")?.forEach { q ->
-        q.split("=").let {
-            if (it.first() == param) {
-                return if (it.size > 1) it.last() else ""
-            }
+    val queryParams = this.query ?: return null
+    val pairs = queryParams.split("&")
+    for (pair in pairs) {
+        val (key, value) = pair.split("=")
+        if (key == param) {
+            return value
         }
     }
     return null

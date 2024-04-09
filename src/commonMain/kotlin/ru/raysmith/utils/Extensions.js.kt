@@ -10,6 +10,12 @@ import kotlin.contracts.contract
  * */
 expect fun Double.format(digits: Int): String
 
+/**
+ * Округляет число double
+ * @param digits количество символов после запятой
+ * */
+expect fun Double.round(digits: Int): Double
+
 
 /** Возвращает значение или null если условие не выполнено */
 inline fun <reified T> T?.orNullIf(predicate: (it: T) -> Boolean): T? {

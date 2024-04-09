@@ -16,6 +16,18 @@ class ExtensionsTest {
     }
 
     @Test
+    fun doubleRound() {
+        val value = 0.568912
+
+        assertEquals(0.57, value.round(2))
+        assertEquals(0.6, value.round(1))
+        assertEquals(1.0, value.round(0))
+        assertEquals(0.56891, value.round(5))
+
+        assertEquals(0.0, 0.1.round(0))
+    }
+
+    @Test
     fun orNullIf() {
         assertNull("test".orNullIf { true })
         assertNotNull("test".orNullIf { false })

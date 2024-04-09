@@ -12,7 +12,8 @@ object PropertiesFactory {
      * @param path file path from resources directory
      * @throws FileNotFoundException if file not found
      * */
-    fun from(path: String) = Properties().apply {
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun from(path: String) = Properties().apply {
         ClassLoader.getSystemClassLoader().getResourceAsStream(path)?.use { load(it) }
             ?: throw FileNotFoundException("Property file $path not found")
     }
@@ -20,7 +21,8 @@ object PropertiesFactory {
     /** Return properties from resources or null if file not exist
      * @param path file path from resources directory
      * */
-    fun fromOrNull(path: String) = ClassLoader.getSystemClassLoader().getResourceAsStream(path)?.let {
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun fromOrNull(path: String) = ClassLoader.getSystemClassLoader().getResourceAsStream(path)?.let {
         Properties().apply { load(it) }
     }
 
