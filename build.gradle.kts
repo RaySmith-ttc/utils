@@ -4,7 +4,7 @@ plugins {
     id("maven-publish")
     kotlin("multiplatform") version "1.9.10"
     signing
-//    id("com.gradleup.nmcp") version "0.0.4"
+    id("com.gradleup.nmcp") version "0.0.7"
 }
 
 repositories {
@@ -63,16 +63,33 @@ allprojects {
         withType<PublishToMavenRepository> {
             dependsOn(check)
         }
+
+        register<Jar>("packageJavadoc") {
+            dependsOn("javadoc")
+            from(getByName("javadoc").outputs)
+            archiveClassifier = "javadoc"
+        }
+
+        register<Jar>("packageSources") {
+            dependsOn("classes")
+            from(sourceSets["main"].allSource)
+            archiveClassifier = "sources"
+        }
     }
+}
+
+artifacts {
+    archives(tasks.getByName("packageJavadoc"))
+    archives(tasks.getByName("packageSources"))
 }
 
 publishing {
     publications {
-        create<MavenPublication>("release") {
-            artifactId = project.name
+        withType(MavenPublication::class.java) {
             groupId = project.group.toString()
             version = project.version.toString()
-            from(components["java"])
+            artifact(tasks.getByName("packageJavadoc"))
+
             pom {
                 packaging = "jar"
                 name.set("Utils")
@@ -109,23 +126,23 @@ publishing {
             val snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
             url = if (version.toString().matches(".*(SNAPSHOT|rc.\\d+)".toRegex())) snapshotsUrl else releasesUrl
             credentials {
-                username = System.getenv("CENTRAL_SONATYPE_USER")
-                password = System.getenv("CENTRAL_SONATYPE_PASS")
+                username = System.getenv("SONATYPE_USER")
+                password = System.getenv("SONATYPE_PASS")
             }
         }
     }
 }
 
-//nmcp {
-//    publish("release") {
-//        username.set(System.getenv("CENTRAL_SONATYPE_USER"))
-//        password.set(System.getenv("CENTRAL_SONATYPE_PASS"))
-//        publicationType.set("USER_MANAGED")
-//        publicationType.set("AUTOMATIC")
-//    }
-//}
+nmcp {
+    publishAllPublications {
+        username.set(System.getenv("CENTRAL_SONATYPE_USER"))
+        password.set(System.getenv("CENTRAL_SONATYPE_PASS"))
+        publicationType.set("USER_MANAGED")
+    }
+}
 
 signing {
-    sign(configurations.archives.get())
-    sign(publishing.publications["release"])
+    publishing.publications.forEach {
+        sign(it)
+    }
 }
