@@ -23,22 +23,22 @@ inline fun <reified T> T?.orNullIf(predicate: (it: T) -> Boolean): T? {
 }
 
 /** Возвращает значение если строка не пустая, иначе [defaultValue] */
-inline fun <T> T.ifNotEmpty(defaultValue: (T) -> T): T where T : CharSequence =
+inline fun <T : CharSequence> T.ifNotEmpty(defaultValue: (T) -> T): T =
     if (isNotEmpty()) defaultValue(this) else this
 
 @OptIn(ExperimentalContracts::class)
-inline fun <T> T.letIf(expression: Boolean, block: (T) -> T): T {
-    kotlin.contracts.contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+inline fun <T : R, R> T.letIf(expression: Boolean, block: (T) -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
         returns() implies expression
     }
     return if (expression) block(this) else this
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun <T> T.letIf(expression: (it: T) -> Boolean, block: (T) -> T): T {
-    kotlin.contracts.contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+inline fun <T : R, R> T.letIf(expression: (it: T) -> Boolean, block: (T) -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
     return if (expression(this)) block(this) else this
 }
@@ -46,7 +46,7 @@ inline fun <T> T.letIf(expression: (it: T) -> Boolean, block: (T) -> T): T {
 @OptIn(ExperimentalContracts::class)
 inline fun <T> T.alsoIf(expression: Boolean, block: (T) -> Unit): T {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
         returns() implies expression
     }
     if (expression) block(this)
@@ -56,7 +56,7 @@ inline fun <T> T.alsoIf(expression: Boolean, block: (T) -> Unit): T {
 @OptIn(ExperimentalContracts::class)
 inline fun <T> T.alsoIf(expression: (it: T) -> Boolean, block: (T) -> Unit): T {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
     if (expression(this)) block(this)
     return this
@@ -65,7 +65,7 @@ inline fun <T> T.alsoIf(expression: (it: T) -> Boolean, block: (T) -> Unit): T {
 @OptIn(ExperimentalContracts::class)
 inline fun <T> T.applyIf(expression: Boolean, block: T.() -> Unit): T {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
         returns() implies expression
     }
     if (expression) block()
@@ -75,7 +75,7 @@ inline fun <T> T.applyIf(expression: Boolean, block: T.() -> Unit): T {
 @OptIn(ExperimentalContracts::class)
 inline fun <T> T.applyIf(expression: (it: T) -> Boolean, block: T.() -> Unit): T {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
     if (expression(this)) block()
     return this

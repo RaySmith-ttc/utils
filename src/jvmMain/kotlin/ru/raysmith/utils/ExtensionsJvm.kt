@@ -3,11 +3,13 @@ package ru.raysmith.utils
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
+import java.time.temporal.Temporal
 import java.util.*
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.time.Duration
 
 actual fun Double.format(digits: Int): String {
     require(digits >= 0) { "digits must be 0 or more" }
@@ -37,7 +39,8 @@ fun Date.toLocalDate(zone: ZoneId = ZoneId.systemDefault()): LocalDate {
         .toLocalDate()
 }
 
-
+@Suppress("UNCHECKED_CAST")
+operator fun <T : Temporal> T.plus(duration: Duration): T = plus(duration.inWholeNanoseconds, ChronoUnit.NANOS) as T
 
 /**
  * Ищет запрошенный параметр запроса

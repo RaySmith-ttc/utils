@@ -14,3 +14,6 @@ fun generateRandomString(length: Int, symbols: List<Char> = ru.raysmith.utils.sy
         append(symbols.random())
     }
 }
+
+/** Append a [symbol] to start and end of [this] string */
+fun String.wrap(symbol: Char) = "$symbol$this$symbol"

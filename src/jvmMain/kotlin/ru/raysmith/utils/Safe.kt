@@ -7,7 +7,7 @@ import kotlin.contracts.contract
 @OptIn(ExperimentalContracts::class)
 inline fun <T> safe(block: () -> T): T? {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
 
     return try {

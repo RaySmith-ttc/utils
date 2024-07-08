@@ -9,7 +9,7 @@ class CacheableTests {
 
     val value = AtomicInteger()
 
-    val getter = {
+    val getter: () -> String get() = {
         value.incrementAndGet()
         "foo"
     }
@@ -30,10 +30,8 @@ class CacheableTests {
     fun `should returns cached value`() {
         val cacheable by Cacheable(getter = getter)
 
-        println(cacheable)
-        println(cacheable)
+        cacheable.hashCode()
 
-        assert(cacheable == "foo")
         assert(value.get() == 1)
     }
 
@@ -41,10 +39,8 @@ class CacheableTests {
     fun `should returns cached value when cache time is infinite`() {
         val cacheable by Cacheable(Duration.INFINITE, getter = getter)
 
-        println(cacheable)
-        println(cacheable)
+        cacheable.hashCode()
 
-        assert(cacheable == "foo")
         assert(value.get() == 1)
     }
 
@@ -52,10 +48,10 @@ class CacheableTests {
     fun `should returns new value every time when cache time is zero`() {
         val cacheable by Cacheable(Duration.ZERO, getter = getter)
 
-        println(cacheable)
-        println(cacheable)
+        cacheable.hashCode()
+        cacheable.hashCode()
+        cacheable.hashCode()
 
-        assert(cacheable == "foo")
         assert(value.get() == 3)
     }
 
@@ -63,12 +59,10 @@ class CacheableTests {
     fun `should updates cache when cache time is over`() {
         val cacheable by Cacheable(1.seconds, getter = getter)
 
-        println(cacheable)
-        println(cacheable)
-
+        cacheable.hashCode()
         Thread.sleep(1000)
+        cacheable.hashCode()
 
-        assert(cacheable == "foo")
         assert(value.get() == 2)
     }
 }

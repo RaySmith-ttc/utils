@@ -44,4 +44,14 @@ class ExtensionsTest {
             "Hello world".takeOrCut(-1)
         }
     }
+
+    @Test
+    fun bytes() {
+        assertEquals("0 b", (-1).bytesToString())
+        assertEquals("0 b", 0.bytesToString())
+        assertEquals("1 b", 1.bytesToString())
+        assertEquals("2 kb", 2048.bytesToString())
+        assertEquals("2 gb", Int.MAX_VALUE.bytesToString())
+        assertEquals("8192 pb", Long.MAX_VALUE.bytesToString())
+    }
 }

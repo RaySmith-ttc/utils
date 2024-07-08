@@ -1,19 +1,33 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("maven-publish")
-    kotlin("multiplatform") version "1.9.10"
+    java
     signing
-    id("com.gradleup.nmcp") version "0.0.7"
+    `maven-publish`
+    kotlin("multiplatform") version "2.0.0"
+    id("com.gradleup.nmcp") version "0.0.8"
+    id("org.jetbrains.dokka") version "1.9.20"
 }
 
-repositories {
-    mavenCentral()
+group = "ru.raysmith"
+version = "3.0.0"
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
 }
 
 kotlin {
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    compilerOptions {
+        freeCompilerArgs.add("-Xopt-in=kotlin.RequiresOptIn")
+    }
+
     jvm {
-        jvmToolchain(8)
         withJava()
         testRuns.named("test") {
             executionTask.configure {
@@ -24,11 +38,11 @@ kotlin {
     }
     js(IR) {
         browser {
-            commonWebpackConfig(Action {
+            commonWebpackConfig {
                 cssSupport {
                     enabled.set(true)
                 }
-            })
+            }
         }
     }
 
@@ -40,55 +54,51 @@ kotlin {
             }
         }
         val jvmMain by getting
-        val jvmTest by getting
+        val jvmTest by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
+            }
+        }
         val jsMain by getting
         val jsTest by getting
     }
 }
 
-allprojects {
-    group = "ru.raysmith"
-    version = "2.5.1"
+tasks {
+    withType<Test> {
+        useJUnitPlatform()
+    }
 
-    tasks {
-        withType<KotlinCompile> {
-            kotlinOptions {
-                freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
-                jvmTarget = JavaVersion.VERSION_1_8.toString()
-            }
-        }
-        withType<Test> {
-            useJUnitPlatform()
-        }
-        withType<PublishToMavenRepository> {
-            dependsOn(check)
-        }
+    withType<PublishToMavenRepository> {
+        dependsOn(check)
+    }
 
-        register<Jar>("packageJavadoc") {
-            dependsOn("javadoc")
-            from(getByName("javadoc").outputs)
-            archiveClassifier = "javadoc"
-        }
-
-        register<Jar>("packageSources") {
-            dependsOn("classes")
-            from(sourceSets["main"].allSource)
-            archiveClassifier = "sources"
-        }
+    register<Jar>("packageSources") {
+        dependsOn("classes")
+        from(sourceSets["main"].allSource)
+        archiveClassifier = "sources"
     }
 }
 
+
 artifacts {
-    archives(tasks.getByName("packageJavadoc"))
     archives(tasks.getByName("packageSources"))
 }
 
+
 publishing {
     publications {
-        withType(MavenPublication::class.java) {
+        withType<MavenPublication> {
             groupId = project.group.toString()
             version = project.version.toString()
-            artifact(tasks.getByName("packageJavadoc"))
+            val dokkaJar = project.tasks.register("${name}DokkaJar", Jar::class) {
+                group = JavaBasePlugin.DOCUMENTATION_GROUP
+                description = "Assembles Kotlin docs with Dokka into a Javadoc jar"
+                archiveClassifier.set("javadoc")
+                from(tasks.named("dokkaHtml"))
+                archiveBaseName.set("${archiveBaseName.get()}-${name}")
+            }
+            artifact(dokkaJar)
 
             pom {
                 packaging = "jar"
@@ -133,16 +143,16 @@ publishing {
     }
 }
 
+signing {
+    publishing.publications.forEach {
+        sign(it)
+    }
+}
+
 nmcp {
     publishAllPublications {
         username.set(System.getenv("CENTRAL_SONATYPE_USER"))
         password.set(System.getenv("CENTRAL_SONATYPE_PASS"))
         publicationType.set("USER_MANAGED")
-    }
-}
-
-signing {
-    publishing.publications.forEach {
-        sign(it)
     }
 }
