@@ -1,6 +1,4 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
@@ -29,11 +27,6 @@ kotlin {
 
     jvm {
         withJava()
-        testRuns.named("test") {
-            executionTask.configure {
-                useJUnitPlatform()
-            }
-        }
         withSourcesJar()
     }
     js(IR) {
@@ -72,33 +65,20 @@ tasks {
     withType<PublishToMavenRepository> {
         dependsOn(check)
     }
-
-    register<Jar>("packageSources") {
-        dependsOn("classes")
-        from(sourceSets["main"].allSource)
-        archiveClassifier = "sources"
-    }
 }
-
-
-artifacts {
-    archives(tasks.getByName("packageSources"))
-}
-
 
 publishing {
     publications {
         withType<MavenPublication> {
             groupId = project.group.toString()
             version = project.version.toString()
-            val dokkaJar = project.tasks.register("${name}DokkaJar", Jar::class) {
+            artifact(project.tasks.register("${name}DokkaJar", Jar::class) {
                 group = JavaBasePlugin.DOCUMENTATION_GROUP
                 description = "Assembles Kotlin docs with Dokka into a Javadoc jar"
                 archiveClassifier.set("javadoc")
                 from(tasks.named("dokkaHtml"))
                 archiveBaseName.set("${archiveBaseName.get()}-${name}")
-            }
-            artifact(dokkaJar)
+            })
 
             pom {
                 packaging = "jar"
@@ -153,6 +133,6 @@ nmcp {
     publishAllPublications {
         username.set(System.getenv("CENTRAL_SONATYPE_USER"))
         password.set(System.getenv("CENTRAL_SONATYPE_PASS"))
-        publicationType.set("USER_MANAGED")
+        publicationType.set("AUTOMATIC")
     }
 }
