@@ -8,8 +8,9 @@ import java.util.*
 /** Contains factory methods for getting properties */
 object PropertiesFactory {
 
-    /** Return properties from resources
-     * @param path file path from resources directory
+    /**
+     * Return properties from resource file [path]
+     *
      * @throws FileNotFoundException if file not found
      * */
     @Suppress("NOTHING_TO_INLINE")
@@ -18,9 +19,7 @@ object PropertiesFactory {
             ?: throw FileNotFoundException("Property file $path not found")
     }
 
-    /** Return properties from resources or null if file not exist
-     * @param path file path from resources directory
-     * */
+    /** Return properties from resource file [path] or null if file not exist */
     @Suppress("NOTHING_TO_INLINE")
     inline fun fromOrNull(path: String) = ClassLoader.getSystemClassLoader().getResourceAsStream(path)?.let {
         Properties().apply { load(it) }
