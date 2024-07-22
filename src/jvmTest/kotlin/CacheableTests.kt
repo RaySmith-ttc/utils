@@ -14,6 +14,11 @@ class CacheableTests {
         "foo"
     }
 
+    val nullableGetter: () -> String? get() = {
+        value.incrementAndGet()
+        null
+    }
+
     @BeforeEach
     fun beforeEach() {
         value.set(0)
@@ -64,5 +69,22 @@ class CacheableTests {
         cacheable.hashCode()
 
         assert(value.get() == 2)
+    }
+
+    @Test
+    fun `should return null with infinity cache`() {
+        val cacheable by Cacheable(Duration.INFINITE, getter = nullableGetter)
+
+        assert(cacheable == null)
+    }
+
+    @Test
+    fun `should call getter once on value is null`() {
+        val cacheable by Cacheable(Duration.INFINITE, getter = nullableGetter)
+
+        cacheable.hashCode()
+        assert(value.get() == 1)
+        cacheable.hashCode()
+        assert(value.get() == 1)
     }
 }

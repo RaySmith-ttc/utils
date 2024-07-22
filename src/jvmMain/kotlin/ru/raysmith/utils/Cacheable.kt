@@ -11,8 +11,9 @@ import kotlin.time.TimeSource
  * */
 class Cacheable<T>(val time: Duration = 5.minutes, val getter: () -> T) {
 
+    private var init = false
     private var cache: T? = null
-    private var lastTime = TimeSource.Monotonic.markNow()
+    private var lastTime = now()
 
     fun clear() {
         cache = null
@@ -20,19 +21,17 @@ class Cacheable<T>(val time: Duration = 5.minutes, val getter: () -> T) {
 
     fun refresh(): T {
         cache = getter()
-        lastTime = TimeSource.Monotonic.markNow()
+        lastTime = now()
+        init = true
 
         @Suppress("UNCHECKED_CAST")
         return cache as T
     }
 
-    fun get() = if (cache == null || lastTime.plus(time) < TimeSource.Monotonic.markNow()) {
-        cache = getter()
-        lastTime = TimeSource.Monotonic.markNow()
+    private fun now() = TimeSource.Monotonic.markNow()
 
-        @Suppress("UNCHECKED_CAST")
-        cache as T
-    } else cache!!
+    @Suppress("UNCHECKED_CAST")
+    fun get() = if (!init || lastTime.plus(time) < now()) refresh() else cache as T
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         return get()
