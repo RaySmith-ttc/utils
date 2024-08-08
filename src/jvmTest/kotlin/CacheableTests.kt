@@ -1,6 +1,8 @@
+import kotlinx.coroutines.delay
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import ru.raysmith.utils.Cacheable
+import ru.raysmith.utils.ms
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -86,5 +88,30 @@ class CacheableTests {
         assert(value.get() == 1)
         cacheable.hashCode()
         assert(value.get() == 1)
+    }
+
+    @Test
+    fun `should not refresh when minTime higher then last refresh`() {
+        val cacheable = Cacheable(Duration.INFINITE, 100.ms, getter = nullableGetter)
+
+        cacheable.hashCode()
+        val lastRefreshTime = cacheable.lastRefreshTime
+
+        Thread.sleep(10)
+        cacheable.refresh()
+        assert(cacheable.lastRefreshTime == lastRefreshTime)
+    }
+
+    @Test
+    fun `should refresh when minTime less then last refresh`() {
+        val cacheable = Cacheable(Duration.INFINITE, 100.ms, getter = nullableGetter)
+
+        cacheable.hashCode()
+        val lastRefreshTime = cacheable.lastRefreshTime
+        assert(cacheable.lastRefreshTime == lastRefreshTime)
+
+        Thread.sleep(100)
+        cacheable.refresh()
+        assert(cacheable.lastRefreshTime != lastRefreshTime)
     }
 }

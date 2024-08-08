@@ -3,13 +3,17 @@ package ru.raysmith.utils
 import kotlin.reflect.KProperty
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 
 /**
  * A delegate that persists the value obtained from [getter] for [time] ms (5 minutes by default).
  * Updates the value after the time has elapsed
+ *
+ * @param minTime if passed
  * */
-class Cacheable<T>(val time: Duration = 5.minutes, val getter: () -> T) {
+// TODO impl minTime
+class Cacheable<T>(val time: Duration = 5.minutes, val minTime: Duration = Duration.ZERO, val getter: () -> T) {
 
     private var init = false
     private var cache: T? = null
@@ -20,12 +24,15 @@ class Cacheable<T>(val time: Duration = 5.minutes, val getter: () -> T) {
         cache = null
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun refresh(): T {
+        if (minTime != Duration.ZERO && lastRefreshTime > now() - minTime) {
+            return cache as T
+        }
         cache = getter()
         lastRefreshTime = now()
         init = true
 
-        @Suppress("UNCHECKED_CAST")
         return cache as T
     }
 
