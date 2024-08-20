@@ -26,7 +26,7 @@ class Cacheable<T>(val time: Duration = 5.minutes, val minTime: Duration = Durat
 
     @Suppress("UNCHECKED_CAST")
     fun refresh(): T {
-        if (minTime != Duration.ZERO && lastRefreshTime > now() - minTime) {
+        if (init && minTime != Duration.ZERO && lastRefreshTime > now() - minTime) {
             return cache as T
         }
         cache = getter()
@@ -39,7 +39,9 @@ class Cacheable<T>(val time: Duration = 5.minutes, val minTime: Duration = Durat
     private fun now() = TimeSource.Monotonic.markNow()
 
     @Suppress("UNCHECKED_CAST")
-    fun get() = if (!init || lastRefreshTime.plus(time) < now()) refresh() else cache as T
+    fun get(): T {
+        return if (!init || lastRefreshTime.plus(time) < now()) refresh() else cache as T
+    }
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         return get()

@@ -94,7 +94,7 @@ class CacheableTests {
     fun `should not refresh when minTime higher then last refresh`() {
         val cacheable = Cacheable(Duration.INFINITE, 100.ms, getter = nullableGetter)
 
-        cacheable.hashCode()
+        cacheable.get()
         val lastRefreshTime = cacheable.lastRefreshTime
 
         Thread.sleep(10)
@@ -106,7 +106,7 @@ class CacheableTests {
     fun `should refresh when minTime less then last refresh`() {
         val cacheable = Cacheable(Duration.INFINITE, 100.ms, getter = nullableGetter)
 
-        cacheable.hashCode()
+        cacheable.get()
         val lastRefreshTime = cacheable.lastRefreshTime
         assert(cacheable.lastRefreshTime == lastRefreshTime)
 
