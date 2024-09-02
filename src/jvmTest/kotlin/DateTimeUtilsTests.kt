@@ -62,6 +62,16 @@ class DateTimeUtilsTests {
     }
 
     @Test
+    fun atZone() {
+        val date = LocalDateTime.of(2020, 1, 1, 12, 0) // +03:00
+
+        val expected = LocalDateTime.of(2020, 1, 1, 14, 0) // +05:00
+        val actual = date.atZone(ZoneId.of("+03:00"), ZoneId.of("+05:00"))
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
     fun firstDayOfYear() {
         val expected = LocalDate.of(LocalDate.now().year, Month.JANUARY, 1)
         val actual = LocalDate.now().firstDayOfYear()

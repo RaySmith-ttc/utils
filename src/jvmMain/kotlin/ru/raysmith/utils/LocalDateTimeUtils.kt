@@ -45,6 +45,13 @@ fun tomorrow(): LocalDate = today().plusDays(1)
  */
 fun nowZoned(zoneId: ZoneId = timeZone): ZonedDateTime = now().atZone(zoneId)
 
+/**
+ * Возвращает время и дату из часового пояса ([zoneId]) в другом часовом поясе ([targetZoneId]).
+ */
+fun LocalDateTime.atZone(zoneId: ZoneId, targetZoneId: ZoneId = timeZone): LocalDateTime {
+    return atZone(zoneId).withZoneSameInstant(targetZoneId).toLocalDateTime()
+}
+
 /** Возвращает первый день года для указанной даты */
 fun LocalDate.firstDayOfYear(): LocalDate = withMonth(Month.JANUARY.value).firstDayOfMonth()
 
