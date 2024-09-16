@@ -1,3 +1,3 @@
 package ru.raysmith.utils
 
-expect fun uuid(): String
+expect fun uuid(zero: Boolean = false): String

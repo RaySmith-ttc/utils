@@ -4,7 +4,7 @@ import kotlin.random.Random
 
 private val CHARS = ('0'..'9') + ('a'..'f')
 
-actual fun uuid() = Random.Default.nextBytes(16).apply {
+actual fun uuid(zero: Boolean) = if (zero) "00000000-0000-0000-0000-000000000000" else Random.Default.nextBytes(16).apply {
     this[6] = ((this[6].toInt() and 0x0F) or (4 shl 4)).toByte()
     this[8] = ((this[8].toInt() and 0x3F) or 0x80).toByte()
 }.let {
