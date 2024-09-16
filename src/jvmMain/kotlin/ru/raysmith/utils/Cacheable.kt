@@ -39,7 +39,9 @@ class Cacheable<T>(val time: Duration = 5.minutes, val minTime: Duration = Durat
     private fun now() = TimeSource.Monotonic.markNow()
 
     @Suppress("UNCHECKED_CAST")
-    fun get(): T {
+    fun get(forceCache: Boolean = false): T {
+        if (init && forceCache) return cache as T
+
         return if (!init || lastRefreshTime.plus(time) < now()) refresh() else cache as T
     }
 
