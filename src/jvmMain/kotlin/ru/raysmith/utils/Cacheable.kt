@@ -51,5 +51,6 @@ class Cacheable<T>(val time: Duration = 5.minutes, val minTime: Duration = Durat
 
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         cache = value
+        init = true
     }
 }
