@@ -4,8 +4,9 @@ import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.chrono.ChronoLocalDate
+import java.time.chrono.ChronoLocalDateTime
 import java.time.temporal.ChronoUnit
-import java.time.temporal.Temporal
 import java.util.*
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -40,7 +41,10 @@ fun Date.toLocalDate(zone: ZoneId = ZoneId.systemDefault()): LocalDate {
 }
 
 @Suppress("UNCHECKED_CAST")
-operator fun <T : Temporal> T.plus(duration: Duration): T = plus(duration.inWholeNanoseconds, ChronoUnit.NANOS) as T
+operator fun <T : ChronoLocalDate> T.plus(duration: Duration): T = plus(duration.inWholeDays, ChronoUnit.DAYS) as T
+@Suppress("UNCHECKED_CAST")
+operator fun <T : ChronoLocalDateTime<*>> T.plus(duration: Duration): T = plus(duration.inWholeNanoseconds, ChronoUnit.NANOS) as T
+
 
 /**
  * Ищет запрошенный параметр запроса
