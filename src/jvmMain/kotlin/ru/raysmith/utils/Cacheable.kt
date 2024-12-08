@@ -3,7 +3,6 @@ package ru.raysmith.utils
 import kotlin.reflect.KProperty
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 
 /**
@@ -20,8 +19,10 @@ class Cacheable<T>(val time: Duration = 5.minutes, val minTime: Duration = Durat
     var lastRefreshTime = now()
         private set
 
-    fun clear() {
+    fun reset() {
+        init = false
         cache = null
+        lastRefreshTime = now()
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -45,12 +46,11 @@ class Cacheable<T>(val time: Duration = 5.minutes, val minTime: Duration = Durat
         return if (!init || lastRefreshTime.plus(time) < now()) refresh() else cache as T
     }
 
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return get()
-    }
-
-    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+    fun set(value: T) {
         cache = value
         init = true
     }
+
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = get()
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T): Unit = set(value)
 }

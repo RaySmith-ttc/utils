@@ -1,4 +1,3 @@
-import kotlinx.coroutines.delay
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import ru.raysmith.utils.Cacheable
@@ -113,5 +112,17 @@ class CacheableTests {
         Thread.sleep(100)
         cacheable.refresh()
         assert(cacheable.lastRefreshTime != lastRefreshTime)
+    }
+
+    @Test
+    fun `clear() should correct works`() {
+        val cacheable = Cacheable(Duration.INFINITE) { 1 }
+        var cache by cacheable
+
+        assert(cacheable.get() == 1)
+        cache = 2
+        assert(cacheable.get() == 2)
+        cacheable.reset()
+        assert(cacheable.get() == 1)
     }
 }
