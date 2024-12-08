@@ -4,13 +4,13 @@ plugins {
     java
     signing
     `maven-publish`
-    kotlin("multiplatform") version "2.0.0"
-    id("com.gradleup.nmcp") version "0.0.8"
+    kotlin("multiplatform") version "2.1.0"
+    id("com.gradleup.nmcp") version "0.0.9"
     id("org.jetbrains.dokka") version "1.9.20"
 }
 
 group = "ru.raysmith"
-version = "3.3.2"
+version = "3.3.3"
 
 java {
     toolchain {
@@ -19,8 +19,6 @@ java {
 }
 
 kotlin {
-
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
         freeCompilerArgs.add("-Xopt-in=kotlin.RequiresOptIn")
     }
@@ -29,6 +27,7 @@ kotlin {
         withJava()
         withSourcesJar()
     }
+
     js(IR) {
         browser {
             commonWebpackConfig {
