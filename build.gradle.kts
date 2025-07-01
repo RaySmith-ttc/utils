@@ -1,10 +1,9 @@
 plugins {
-    java
-    signing
-    `maven-publish`
     kotlin("multiplatform") version "2.1.21"
-    id("com.gradleup.nmcp") version "0.0.9"
-    id("org.jetbrains.dokka") version "1.9.20"
+    id("com.vanniktech.maven.publish") version "0.33.0"
+    id("org.jetbrains.dokka") version "2.0.0"
+    `maven-publish`
+    signing
 }
 
 group = "ru.raysmith"
@@ -22,7 +21,6 @@ kotlin {
     }
 
     jvm {
-        withJava()
         withSourcesJar()
     }
 
@@ -37,20 +35,21 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
-        val jvmMain by getting
-        val jvmTest by getting {
+
+        jvmTest {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
             }
         }
-        val jsMain by getting
-        val jsTest by getting
+
+        jsTest {
+
+        }
     }
 }
 
@@ -64,59 +63,34 @@ tasks {
     }
 }
 
-publishing {
-    publications {
-        withType<MavenPublication> {
-            groupId = project.group.toString()
-            version = project.version.toString()
-            artifact(project.tasks.register("${name}DokkaJar", Jar::class) {
-                group = JavaBasePlugin.DOCUMENTATION_GROUP
-                description = "Assembles Kotlin docs with Dokka into a Javadoc jar"
-                archiveClassifier.set("javadoc")
-                from(tasks.named("dokkaHtml"))
-                archiveBaseName.set("${archiveBaseName.get()}-${name}")
-            })
+mavenPublishing {
+    publishToMavenCentral(automaticRelease = false)
+    signAllPublications()
 
-            pom {
-                packaging = "jar"
-                name.set("Utils")
-                url.set("https://github.com/RaySmith-ttc/utils")
-                description.set("Basic module with utils")
+    pom {
+        packaging = "jar"
+        name.set("Utils")
+        url.set("https://github.com/RaySmith-ttc/utils")
+        description.set("Basic module with utils")
 
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:https://github.com/RaySmith-ttc/utils.git")
-                    developerConnection.set("scm:git@github.com:RaySmith-ttc/utils.git")
-                    url.set("https://github.com/RaySmith-ttc/utils")
-                }
-
-                developers {
-                    developer {
-                        id.set("RaySmith-ttc")
-                        name.set("Ray Smith")
-                        email.set("raysmith.ttcreate@gmail.com")
-                    }
-                }
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
             }
         }
-    }
-    repositories {
-        maven {
-            name = "OSSRH"
-            val releasesUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            val snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            url = if (version.toString().matches(".*(SNAPSHOT|rc.\\d+)".toRegex())) snapshotsUrl else releasesUrl
-            credentials {
-//                username = System.getenv("SONATYPE_USER")
-//                password = System.getenv("SONATYPE_PASS")
-                username = System.getenv("CENTRAL_SONATYPE_USER")
-                password = System.getenv("CENTRAL_SONATYPE_PASS")
+
+        scm {
+            connection.set("scm:https://github.com/RaySmith-ttc/utils.git")
+            developerConnection.set("scm:git@github.com:RaySmith-ttc/utils.git")
+            url.set("https://github.com/RaySmith-ttc/utils")
+        }
+
+        developers {
+            developer {
+                id.set("RaySmith-ttc")
+                name.set("Ray Smith")
+                email.set("raysmith.ttcreate@gmail.com")
             }
         }
     }
@@ -125,16 +99,5 @@ publishing {
 signing {
     publishing.publications.forEach {
         sign(it)
-    }
-}
-
-nmcp {
-    publishAllPublications {
-        username.set(System.getenv("CENTRAL_SONATYPE_USER"))
-        password.set(System.getenv("CENTRAL_SONATYPE_PASS"))
-//        username.set(System.getenv("SONATYPE_USER"))
-//        password.set(System.getenv("SONATYPE_PASS"))
-//        publicationType.set("AUTOMATIC")
-        publicationType.set("USER_MANAGED")
     }
 }
