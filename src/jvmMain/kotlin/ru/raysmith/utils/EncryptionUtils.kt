@@ -45,3 +45,14 @@ fun ByteArray.encodeToHexString(salt: String, algorithm: String): String {
     cipher.init(Cipher.ENCRYPT_MODE, key)
     return cipher.doFinal(this).toHexString()
 }
+
+/**
+ * Зашифровывает строку, используя указанную [соль][salt] и SHA-256
+ *
+ * @return хеш строки
+ */
+fun String.sha256(salt: String): String {
+    val digest = java.security.MessageDigest.getInstance("SHA-256")
+    val hash = digest.digest(salt.toByteArray() + this.toByteArray())
+    return hash.joinToString("") { "%02x".format(it) }
+}

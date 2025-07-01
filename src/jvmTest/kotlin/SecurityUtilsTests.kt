@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test
 import ru.raysmith.utils.decode
 import ru.raysmith.utils.encode
 import ru.raysmith.utils.encodeToHexString
+import ru.raysmith.utils.sha256
 
 class SecurityUtilsTests {
 
@@ -34,5 +35,15 @@ class SecurityUtilsTests {
 
         assert(encoded == "c91f6cca00a3f32284b9336509966f2d")
         assert(String(decoded) == string)
+    }
+
+    @Test
+    fun sha256() {
+        val input = "Hello world!"
+        val salt = "123"
+
+        val hash = input.sha256(salt)
+
+        assert(hash == "57f37aaa53b4355762cd5209c435870ef8fb5e0d355a9715c67a0d6d3bb52708")
     }
 }

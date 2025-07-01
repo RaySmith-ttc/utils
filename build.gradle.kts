@@ -1,16 +1,14 @@
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-
 plugins {
     java
     signing
     `maven-publish`
-    kotlin("multiplatform") version "2.1.0"
+    kotlin("multiplatform") version "2.1.21"
     id("com.gradleup.nmcp") version "0.0.9"
     id("org.jetbrains.dokka") version "1.9.20"
 }
 
 group = "ru.raysmith"
-version = "3.3.3"
+version = "3.4.0"
 
 java {
     toolchain {
@@ -48,7 +46,7 @@ kotlin {
         val jvmMain by getting
         val jvmTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
             }
         }
         val jsMain by getting
@@ -115,8 +113,10 @@ publishing {
             val snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
             url = if (version.toString().matches(".*(SNAPSHOT|rc.\\d+)".toRegex())) snapshotsUrl else releasesUrl
             credentials {
-                username = System.getenv("SONATYPE_USER")
-                password = System.getenv("SONATYPE_PASS")
+//                username = System.getenv("SONATYPE_USER")
+//                password = System.getenv("SONATYPE_PASS")
+                username = System.getenv("CENTRAL_SONATYPE_USER")
+                password = System.getenv("CENTRAL_SONATYPE_PASS")
             }
         }
     }
@@ -132,6 +132,9 @@ nmcp {
     publishAllPublications {
         username.set(System.getenv("CENTRAL_SONATYPE_USER"))
         password.set(System.getenv("CENTRAL_SONATYPE_PASS"))
-        publicationType.set("AUTOMATIC")
+//        username.set(System.getenv("SONATYPE_USER"))
+//        password.set(System.getenv("SONATYPE_PASS"))
+//        publicationType.set("AUTOMATIC")
+        publicationType.set("USER_MANAGED")
     }
 }
