@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "ru.raysmith"
-version = "3.4.0"
+version = "3.4.1"
 
 java {
     toolchain {

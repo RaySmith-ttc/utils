@@ -86,6 +86,11 @@ fun <T> Boolean.outcome(whenTrue: T, whenFalse: T): T {
     return if (this) whenTrue else whenFalse
 }
 
+/** Returns the value corresponding to the outcome */
+fun <T> Boolean.outcome(whenTrue: () -> T, whenFalse: () -> T): T {
+    return if (this) whenTrue() else whenFalse()
+}
+
 /**
  * Returns a string containing the first [n] characters from this string + 3-bytes character `…`,
  * or the entire string if the string is shorter.
