@@ -6,5 +6,8 @@
 ### Idea
 .idea
 .kotlin
-
-kotlin-js-store
+.run
+!.run/kotlinUpgradeYarnLock.run.xml
+!.run/publishToMavenCentral.run.xml
+!.run/publishToMavenLocal.run.xml
+!.run/test.run.xml

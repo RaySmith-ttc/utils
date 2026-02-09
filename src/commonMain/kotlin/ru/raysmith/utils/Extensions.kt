@@ -1,6 +1,7 @@
 package ru.raysmith.utils
 
 import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.ExperimentalExtendedContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
@@ -26,11 +27,12 @@ inline fun <reified T> T?.orNullIf(predicate: (it: T) -> Boolean): T? {
 inline fun <T : CharSequence> T.ifNotEmpty(defaultValue: (T) -> T): T =
     if (isNotEmpty()) defaultValue(this) else this
 
-@OptIn(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class, ExperimentalExtendedContracts::class)
 inline fun <T : R, R> T.letIf(expression: Boolean, block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
         returns() implies expression
+        expression holdsIn block
     }
     return if (expression) block(this) else this
 }
@@ -43,11 +45,12 @@ inline fun <T : R, R> T.letIf(expression: (it: T) -> Boolean, block: (T) -> R): 
     return if (expression(this)) block(this) else this
 }
 
-@OptIn(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class, ExperimentalExtendedContracts::class)
 inline fun <T> T.alsoIf(expression: Boolean, block: (T) -> Unit): T {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
         returns() implies expression
+        expression holdsIn block
     }
     if (expression) block(this)
     return this
@@ -62,11 +65,12 @@ inline fun <T> T.alsoIf(expression: (it: T) -> Boolean, block: (T) -> Unit): T {
     return this
 }
 
-@OptIn(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class, ExperimentalExtendedContracts::class)
 inline fun <T> T.applyIf(expression: Boolean, block: T.() -> Unit): T {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
         returns() implies expression
+        expression holdsIn block
     }
     if (expression) block()
     return this

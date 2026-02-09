@@ -1,13 +1,14 @@
 plugins {
-    kotlin("multiplatform") version "2.1.21"
-    id("com.vanniktech.maven.publish") version "0.33.0"
-    id("org.jetbrains.dokka") version "2.0.0"
+    kotlin("multiplatform") version "2.3.0"
+    id("org.jetbrains.dokka") version "2.1.0"
+    id("com.vanniktech.maven.publish") version "0.36.0"
+    id("com.github.ben-manes.versions") version "0.53.0"
     `maven-publish`
     signing
 }
 
 group = "ru.raysmith"
-version = "3.4.1"
+version = "4.0.0"
 
 java {
     toolchain {
@@ -17,21 +18,17 @@ java {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.add("-Xopt-in=kotlin.RequiresOptIn")
+        freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+        freeCompilerArgs.add("-Xallow-holdsin-contract")
     }
 
     jvm {
         withSourcesJar()
     }
 
-    js(IR) {
-        browser {
-            commonWebpackConfig {
-                cssSupport {
-                    enabled.set(true)
-                }
-            }
-        }
+    js {
+        browser()
+        nodejs()
     }
 
     sourceSets {
@@ -45,10 +42,6 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
             }
-        }
-
-        jsTest {
-
         }
     }
 }
