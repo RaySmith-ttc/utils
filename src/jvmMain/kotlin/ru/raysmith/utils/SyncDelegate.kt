@@ -4,10 +4,11 @@ import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-/** Возвращает экземпляр [SyncDelegate] */
+/** Creates a thread-safe delegate that synchronizes access to the property value. */
+@Suppress("UnusedReceiverParameter")
 fun <T> Delegates.sync(defaultValue: T) = SyncDelegate(defaultValue)
 
-/** Thread-safe делегат */
+/** Thread-safe delegate that synchronizes access to the property value. */
 class SyncDelegate<T>(defaultValue: T): ReadWriteProperty<Any, T> {
     val lock = Any()
 

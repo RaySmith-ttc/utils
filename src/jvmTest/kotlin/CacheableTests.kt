@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import ru.raysmith.utils.Cacheable
+import ru.raysmith.utils.filterKeysNotNull
 import ru.raysmith.utils.ms
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.time.Duration
@@ -115,6 +116,7 @@ class CacheableTests {
     }
 
     @Test
+    @Suppress("VariableNeverRead", "AssignedValueIsNeverRead")
     fun `clear() should correct works`() {
         val cacheable = Cacheable(Duration.INFINITE) { 1 }
         var cache by cacheable
@@ -124,5 +126,20 @@ class CacheableTests {
         assert(cacheable.get() == 2)
         cacheable.reset()
         assert(cacheable.get() == 1)
+    }
+
+    @Test
+    fun `filterKeysNotNull() should correct works`() {
+        val map = mapOf(
+            "a" to 1,
+            null to 2,
+            "b" to 3
+        )
+
+        val filteredMap = map.filterKeysNotNull()
+
+        assert(filteredMap.size == 2)
+        assert(filteredMap["a"] == 1)
+        assert(filteredMap["b"] == 3)
     }
 }

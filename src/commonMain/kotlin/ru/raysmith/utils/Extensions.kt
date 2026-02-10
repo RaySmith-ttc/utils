@@ -6,46 +6,55 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 /**
- * Форматирует строковое представление числа
- * @param digits количество символов после запятой
+ * Formats the string representation of a number
+ * @param digits the number of digits after the decimal point. Should be 0 or more.
  * */
 expect fun Double.format(digits: Int): String
 
 /**
- * Округляет число double
- * @param digits количество символов после запятой
+ * Rounds a double number
+ * @param digits the number of digits after the decimal point. Should be 0 or more.
  * */
 expect fun Double.round(digits: Int): Double
 
-
-/** Возвращает значение или null если условие не выполнено */
+/** Returns the value or null if the condition is not met */
 inline fun <reified T> T?.orNullIf(predicate: (it: T) -> Boolean): T? {
     return if (predicate(this as T)) null else this
 }
 
-/** Возвращает значение если строка не пустая, иначе [defaultValue] */
+/** Returns the value if the string is not empty, otherwise [defaultValue] */
 inline fun <T : CharSequence> T.ifNotEmpty(defaultValue: (T) -> T): T =
     if (isNotEmpty()) defaultValue(this) else this
 
+
 @OptIn(ExperimentalContracts::class, ExperimentalExtendedContracts::class)
+/** Returns the result of [block] if [expression] is true, otherwise returns the receiver */
 inline fun <T : R, R> T.letIf(expression: Boolean, block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
         returns() implies expression
         expression holdsIn block
     }
+
     return if (expression) block(this) else this
 }
 
 @OptIn(ExperimentalContracts::class)
+/** Returns the result of [block] if the result of [expression] is true, otherwise returns the receiver */
 inline fun <T : R, R> T.letIf(expression: (it: T) -> Boolean, block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
     }
+
     return if (expression(this)) block(this) else this
 }
 
 @OptIn(ExperimentalContracts::class, ExperimentalExtendedContracts::class)
+/**
+ * Performs the given [block] if [expression] is true
+ *
+ * @return the receiver object
+ * */
 inline fun <T> T.alsoIf(expression: Boolean, block: (T) -> Unit): T {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
@@ -57,6 +66,11 @@ inline fun <T> T.alsoIf(expression: Boolean, block: (T) -> Unit): T {
 }
 
 @OptIn(ExperimentalContracts::class)
+/**
+ * Performs the given [block] if the result of [expression] is true
+ *
+ * @return the receiver object
+ * */
 inline fun <T> T.alsoIf(expression: (it: T) -> Boolean, block: (T) -> Unit): T {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
@@ -66,6 +80,11 @@ inline fun <T> T.alsoIf(expression: (it: T) -> Boolean, block: (T) -> Unit): T {
 }
 
 @OptIn(ExperimentalContracts::class, ExperimentalExtendedContracts::class)
+/**
+ * Performs the given [block] if [expression] is true
+ *
+ * @return the receiver object
+ * */
 inline fun <T> T.applyIf(expression: Boolean, block: T.() -> Unit): T {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
@@ -77,6 +96,11 @@ inline fun <T> T.applyIf(expression: Boolean, block: T.() -> Unit): T {
 }
 
 @OptIn(ExperimentalContracts::class)
+/**
+ * Performs the given [block] if the result of [expression] is true
+ *
+ * @return the receiver object
+ * */
 inline fun <T> T.applyIf(expression: (it: T) -> Boolean, block: T.() -> Unit): T {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
@@ -93,26 +117,4 @@ fun <T> Boolean.outcome(whenTrue: T, whenFalse: T): T {
 /** Returns the value corresponding to the outcome */
 fun <T> Boolean.outcome(whenTrue: () -> T, whenFalse: () -> T): T {
     return if (this) whenTrue() else whenFalse()
-}
-
-/**
- * Returns a string containing the first [n] characters from this string + 3-bytes character `…`,
- * or the entire string if the string is shorter.
- *
- * Example:
- * ```
- * "Hello world".takeOrCut(6) // "Hello…"
- * "Hello world".takeOrCut(5, countDots = false) // "Hello…"
- * ```
- *
- * @param countDots if true and string longer than [n], result string's length with included `…` will be [n] length,
- * otherwise [n] length + 1
- * @throws IllegalArgumentException if [n] is negative.
- * */
-fun String.takeOrCut(n: Int, countDots: Boolean = true) = when {
-    n == 0 && countDots -> ""
-    n == 0 -> "…"
-    else -> letIf(length > n) {
-        "${it.take(if (countDots) n - 1 else n)}…"
-    }
 }

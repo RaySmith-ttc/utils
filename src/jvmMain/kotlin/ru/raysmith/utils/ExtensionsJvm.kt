@@ -1,6 +1,8 @@
 package ru.raysmith.utils
 
 import java.net.URL
+import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -17,7 +19,7 @@ actual fun Double.format(digits: Int): String {
     if (digits == 0) return roundToInt().toString()
 
     val p = 10.0.pow(digits)
-    return (Math.round(this * p) / p).toString()
+    return ((this * p).roundToInt() / p).toString()
 }
 
 actual fun Double.round(digits: Int): Double {
@@ -25,7 +27,7 @@ actual fun Double.round(digits: Int): Double {
     if (digits == 0) return roundToInt().toDouble()
 
     val p = 10.0.pow(digits)
-    return (Math.round(this * p) / p)
+    return ((this * p).roundToInt() / p)
 }
 
 fun Date.toLocalDateTime(zone: ZoneId = ZoneId.systemDefault()): LocalDateTime {

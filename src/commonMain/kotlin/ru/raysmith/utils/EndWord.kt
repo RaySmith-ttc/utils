@@ -6,23 +6,18 @@ private val cases = intArrayOf(2, 0, 1, 1, 1, 2)
 
 /**
  * Возвращает вариант исчисления корректный для числа.
- *
  * ### Использование:
- *
  * Необходимо получить верное окончание для слова «фотография» во фрагменте предложения ... <i>n</i> фотограф(-ия/-ии/ий) ...
- *
+ * ```
  * val titles = listOf("фотография", "фотографии", "фотографий")
- *
+ * ```
  * Тогда будет возвращено:
- *
- * endWordForNum(1, titles) — фотография
- *
- * endWordForNum(3, titles) — фотографии
- *
- * endWordForNum(10, titles) — фотографий
+ * - `endWordForNum(1, titles)` — фотография
+ * - `endWordForNum(3, titles)` — фотографии
+ * - `endWordForNum(10, titles)` — фотографий
  *
  * @param number число
- * @param titles список с 3-мя вариантами исчисления
+ * @param titles список с 3-мя вариантами исчисления подходящие под числа 1, 2 и 5 соответственно
  * */
 fun endWordForNum(number: Number, titles: List<String>): String {
     val longNumber = number.toLong()
@@ -52,7 +47,7 @@ enum class EndWordForNumNumberSide {
  *
  * @return вариант исчисления вместе с числом.
  * */
-@Deprecated("Use new method Number.endWord()", ReplaceWith("number.endOfWord(titles, numberSide)"))
+@Deprecated("Use new method Number.endWord(). Will be removed in 5.0.0", ReplaceWith("number.endOfWord(titles, numberSide)"))
 fun endWordForNumWithNumber(
     number: Number,
     titles: List<String>,
@@ -66,24 +61,19 @@ fun endWordForNumWithNumber(
 
 /**
  * Возвращает вариант исчисления корректный для числа.
- *
  * ### Использование:
- *
  * Необходимо получить верное окончание для слова «фотография» во фрагменте предложения ... <i>n</i> фотограф(-ия/-ии/ий) ...
- *
+ * ```
  * val titles = listOf("фотография", "фотографии", "фотографий")
- *
+ * ```
  * Тогда будет возвращено:
+ * - `1.endOfWord(titles)` — 1 фотография
+ * - `3.endOfWord(titles)` — 3 фотографии
+ * - `10.endOfWord(titles)` — 10 фотографий
  *
- * 1.endOfWord(titles) — 1 фотография
- *
- * 3.endOfWord(titles) — 3 фотографии
- *
- * 10.endOfWord(titles) — 10 фотографий
- *
- * @param titles список с 3-мя вариантами исчисления
- * @param numberSide сторона с которой будет добавлено число в результатирующей строке
- * @param withNum если *true* — будет добавлять чисто в результатирующую строку
+ * @param titles список с 3-мя вариантами исчисления подходящие под числа 1, 2 и 5 соответственно
+ * @param numberSide сторона с которой будет добавлено число в результирующей строке
+ * @param withNum если *true* — будет добавлять чисто в результирующей строку
  * */
 fun Number.endOfWord(
     titles: List<String>, numberSide: EndWordForNumNumberSide = EndWordForNumNumberSide.LEFT, withNum: Boolean = true
