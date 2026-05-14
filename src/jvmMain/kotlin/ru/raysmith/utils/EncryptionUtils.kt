@@ -2,7 +2,6 @@ package ru.raysmith.utils
 
 import java.security.MessageDigest
 import java.security.SecureRandom
-import java.util.Base64
 import javax.crypto.Cipher
 import javax.crypto.Mac
 import javax.crypto.SecretKey
@@ -57,20 +56,19 @@ fun ByteArray.encodeToHexString(salt: String, algorithm: String, format: HexForm
 }
 
 /**
- * Hashes a string using the specified [salt] and SHA-256.
+ * Hashes a byte array using the specified [salt] and SHA-256.
  *
- * @return SHA-256 hash of the string
+ * @return SHA-256 hash as a byte array
  */
-@Deprecated("Use hmacSHA256 for keyed hashing or MessageDigest directly.", ReplaceWith("hmacSHA256(salt, format)"))
 @OptIn(ExperimentalStdlibApi::class)
-fun String.sha256(salt: String, format: HexFormat = HexFormat.Default): String {
+fun ByteArray.sha256(salt: ByteArray): ByteArray {
     val digest = MessageDigest.getInstance("SHA-256")
-    val hash = digest.digest(salt.toByteArray(Charsets.UTF_8) + this.toByteArray(Charsets.UTF_8))
-    return hash.toHexString(format)
+    val hash = digest.digest(salt + this)
+    return hash
 }
 
 /**
- * Creates an HMAC hash of the string using the specified algorithm and key.
+ * Creates an HMAC hash of the byte array using the specified algorithm and key.
  *
  * @param algorithm HMAC algorithm (e.g. HmacSHA256, HmacSHA512)
  * @param key HMAC key
@@ -79,35 +77,55 @@ fun String.sha256(salt: String, format: HexFormat = HexFormat.Default): String {
  * @see hmacSHA256
  * @see hmacSHA512
  */
-fun String.hmac(algorithm: String, key: String): ByteArray {
+fun ByteArray.hmac(algorithm: String, key: ByteArray): ByteArray {
     val mac = Mac.getInstance(algorithm)
-    mac.init(SecretKeySpec(key.toByteArray(Charsets.UTF_8), algorithm))
-    return mac.doFinal(toByteArray(Charsets.UTF_8))
+    mac.init(SecretKeySpec(key, algorithm))
+    return mac.doFinal(this)
 }
 
 /**
- * Creates an HMAC SHA-256 hash of the string using the specified key.
+ * Creates an HMAC SHA-256 hash of the byte array using the specified key.
  *
  * @param key HMAC key
- * @return HMAC SHA-256 hash in hexadecimal format
+ * @return HMAC SHA-256 hash as a byte array
  */
 @OptIn(ExperimentalStdlibApi::class)
-fun String.hmacSHA256(key: String, format: HexFormat = HexFormat.Default) = hmac("HmacSHA256", key).toHexString(format)
+fun ByteArray.hmacSHA256(key: ByteArray) = hmac("HmacSHA256", key)
+
+/**
+ * Creates an HMAC SHA-256 hash of the string using the specified key and returns it as a hexadecimal string.
+ *
+ * @param key HMAC key
+ * @return HMAC SHA-256 as a hexadecimal string
+ * */
+fun String.hmacSHA256(key: String, format: HexFormat = HexFormat.Default): String {
+    return toByteArray().hmac("HmacSHA256", key.toByteArray()).toHexString(format)
+}
 
 /**
  * Creates an HMAC SHA-512 hash of the string using the specified key.
  *
  * @param key HMAC key
- * @return HMAC SHA-512 hash in hexadecimal format
+ * @return HMAC SHA-512 as a byte array
  */
 @OptIn(ExperimentalStdlibApi::class)
-fun String.hmacSHA512(key: String, format: HexFormat = HexFormat.Default) = hmac("HmacSHA512", key).toHexString(format)
+fun ByteArray.hmacSHA512(key: ByteArray) = hmac("HmacSHA512", key)
 
 /**
- * Generates a cryptographically strong random hexadecimal string.
+ * Creates an HMAC SHA-512 hash of the string using the specified key and returns it as a hexadecimal string.
+ *
+ * @param key HMAC key
+ * @return HMAC SHA-512 as a hexadecimal string
+ * */
+fun String.hmacSHA512(key: String, format: HexFormat = HexFormat.Default): String {
+    return toByteArray().hmac("HmacSHA512", key.toByteArray()).toHexString(format)
+}
+
+/**
+ * Generates a cryptographically strong random byte array.
  *
  * @param byteLength number of random bytes to generate. Default 32 (256 bits), resulting in a 64-character string.
- * @return random hexadecimal string
+ * @return random byte array
  */
 @OptIn(ExperimentalStdlibApi::class)
 fun randomHexString(byteLength: Int = 32, format: HexFormat = HexFormat.Default): String {
@@ -118,6 +136,19 @@ fun randomHexString(byteLength: Int = 32, format: HexFormat = HexFormat.Default)
 }
 
 /**
+ * Generates a cryptographically strong random byte array.
+ *
+ * @param length number of random bytes to generate. Default 32 (256 bits).
+ * @return random byte array
+ * */
+fun randomByteArray(length: Int = 32): ByteArray {
+    val random = SecureRandom()
+    val bytes = ByteArray(length)
+    random.nextBytes(bytes)
+    return bytes
+}
+
+/**
  * Generates a cryptographically strong random hexadecimal string.
  *
  * @param length number of random bytes to generate (ambiguous name). Default 32 (256 bits).
@@ -125,8 +156,8 @@ fun randomHexString(byteLength: Int = 32, format: HexFormat = HexFormat.Default)
  */
 @Deprecated("Ambiguous length parameter. Use randomHexString(byteLength).", ReplaceWith("randomHexString(length, format)"))
 @OptIn(ExperimentalStdlibApi::class)
-fun secureRandomHex(length: Int = 32, format: HexFormat = HexFormat.Default): String {
-    return randomHexString(length, format)
+fun secureRandomHex(length: Int = 32): String {
+    return randomHexString(length)
 }
 
 // --------------------------------------------- AES-GCM Implementation ------------------------------------------------
@@ -136,30 +167,28 @@ private const val GCM_IV_LENGTH = 12
 private const val GCM_TAG_LENGTH = 128
 
 /**
- * Encrypts the string using AES-GCM (Authenticated Encryption).
+ * Encrypts the bytes using AES-GCM (Authenticated Encryption).
  * The result is URL-safe Base64 string containing both the IV and the Ciphertext.
  *
  * @param secretKey secret key (must be 16, 24, or 32 bytes for AES-128/192/256)
  * @return URL-safe Base64 encrypted string
  */
-fun String.encryptAesGcm(secretKey: SecretKey): String {
+fun ByteArray.encryptAesGcm(secretKey: SecretKey): ByteArray {
     val cipher = Cipher.getInstance(AES_GCM_ALGORITHM)
     val iv = ByteArray(GCM_IV_LENGTH)
     SecureRandom().nextBytes(iv)
     val spec = GCMParameterSpec(GCM_TAG_LENGTH, iv)
     cipher.init(Cipher.ENCRYPT_MODE, secretKey, spec)
 
-    val cipherText = cipher.doFinal(this.toByteArray(Charsets.UTF_8))
-    val combined = iv + cipherText
-    
-    return Base64.getUrlEncoder().withoutPadding().encodeToString(combined)
+    val cipherText = cipher.doFinal(this)
+    return iv + cipherText
 }
 
 /**
  * Helper to encrypt using a string key. The key is hashed to 32 bytes to ensure valid AES-256 key size.
  */
-fun String.encryptAesGcm(password: String): String {
-    val keyBytes = MessageDigest.getInstance("SHA-256").digest(password.toByteArray(Charsets.UTF_8))
+fun ByteArray.encryptAesGcm(password: ByteArray): ByteArray {
+    val keyBytes = MessageDigest.getInstance("SHA-256").digest(password)
     return this.encryptAesGcm(SecretKeySpec(keyBytes, "AES"))
 }
 
@@ -170,25 +199,24 @@ fun String.encryptAesGcm(password: String): String {
  * @return original decrypted string
  * @throws javax.crypto.AEADBadTagException if the key is wrong or the data was tampered with
  */
-fun String.decryptAesGcm(secretKey: SecretKey): String {
-    val decoded = Base64.getUrlDecoder().decode(this)
+fun ByteArray.decryptAesGcm(secretKey: SecretKey): ByteArray {
     
     // Extract IV
-    if (decoded.size < GCM_IV_LENGTH) throw IllegalArgumentException("Invalid encrypted data length")
-    val iv = decoded.copyOfRange(0, GCM_IV_LENGTH)
-    val cipherText = decoded.copyOfRange(GCM_IV_LENGTH, decoded.size)
+    if (size < GCM_IV_LENGTH) throw IllegalArgumentException("Invalid encrypted data length")
+    val iv = copyOfRange(0, GCM_IV_LENGTH)
+    val cipherByteArray = copyOfRange(GCM_IV_LENGTH, size)
 
     val cipher = Cipher.getInstance(AES_GCM_ALGORITHM)
     val spec = GCMParameterSpec(GCM_TAG_LENGTH, iv)
     cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
 
-    return String(cipher.doFinal(cipherText), Charsets.UTF_8)
+    return cipher.doFinal(cipherByteArray)
 }
 
 /**
  * Helper to decrypt using a string key.
  */
-fun String.decryptAesGcm(password: String): String {
-    val keyBytes = MessageDigest.getInstance("SHA-256").digest(password.toByteArray(Charsets.UTF_8))
+fun ByteArray.decryptAesGcm(password: ByteArray): ByteArray {
+    val keyBytes = MessageDigest.getInstance("SHA-256").digest(password)
     return this.decryptAesGcm(SecretKeySpec(keyBytes, "AES"))
 }
