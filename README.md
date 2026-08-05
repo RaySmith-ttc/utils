@@ -13,6 +13,8 @@ Zero-dependencies KMP utils and extensions.
 - Iterable extensions:
   - `forEachLet()`
   - `Map.filterKeysNotNull()`
+  - `MutableCollection<T> /= value` - add/remove element to/from collection, 
+  - `Iterable<T> / value` - add/remove element to/from collection, 
 - Duration extensions:
   - `Duration.ms`
   - `Long.ms`
