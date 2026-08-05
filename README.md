@@ -17,6 +17,7 @@ Zero-dependencies KMP utils and extensions.
   - `Iterable<T> / value` - add/remove element to/from collection, 
 - Duration extensions:
   - `Duration.ms`
+  - `Duration.between()`
   - `Long.ms`
   - `Int.ms`
 - String extensions and utils:
