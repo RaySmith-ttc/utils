@@ -82,6 +82,7 @@ zone by default. Use in most of the date and time extensions.
 - Others:
   - `Charsets.WINDOWS_1251`
   - `String.capitalize()`
+  - `argsToProperties()`
 
 #### Utils
 - `PropertiesFactory` - Contains factory methods for getting properties from files
