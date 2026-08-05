@@ -1,0 +1,16 @@
+[versions]
+dokka = "2.2.0"
+kotlin = "2.4.10"
+kotlinx-coroutines = "1.11.0"
+publish = "0.37.0"
+versions = "0.59.0"
+
+[libraries]
+
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+
+[plugins]
+versions = { id = "io.github.ben-manes.versions", version.ref = "versions" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+publish = { id = "com.vanniktech.maven.publish", version.ref = "publish" }

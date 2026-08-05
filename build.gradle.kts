@@ -1,14 +1,17 @@
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import com.github.benmanes.gradle.versions.updates.gradle.GradleReleaseChannel
+
 plugins {
-    kotlin("multiplatform") version "2.3.0"
-    id("org.jetbrains.dokka") version "2.1.0"
-    id("com.vanniktech.maven.publish") version "0.36.0"
-    id("com.github.ben-manes.versions") version "0.53.0"
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.publish)
+    alias(libs.plugins.versions)
     `maven-publish`
     signing
 }
 
 group = "ru.raysmith"
-version = "4.2.0"
+version = "4.3.0"
 
 java {
     toolchain {
@@ -40,7 +43,7 @@ kotlin {
 
         jvmTest {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+                implementation(libs.kotlinx.coroutines.core)
             }
         }
     }
@@ -53,6 +56,20 @@ tasks {
 
     withType<PublishToMavenRepository> {
         dependsOn(check)
+    }
+
+    named<DependencyUpdatesTask>("dependencyUpdates") {
+        revision = "release"
+        outputFormatter = "json"
+        gradleReleaseChannel = GradleReleaseChannel.CURRENT.id
+
+        rejectVersionIf {
+            val stableKeyword = listOf("RELEASE", "FINAL", "GA").any {
+                candidate.version.contains(it, ignoreCase = true)
+            }
+            val regex = "^[0-9,.v-]+(?!(-?(r|Beta|Alpha)))$".toRegex()
+            (stableKeyword || regex.matches(candidate.version)).not()
+        }
     }
 }
 

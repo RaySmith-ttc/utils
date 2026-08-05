@@ -32,7 +32,6 @@ inline fun <T : CharSequence> T.ifNotEmpty(defaultValue: (T) -> T): T =
 inline fun <T : R, R> T.letIf(expression: Boolean, block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
-        returns() implies expression
         expression holdsIn block
     }
 
@@ -58,7 +57,6 @@ inline fun <T : R, R> T.letIf(expression: (it: T) -> Boolean, block: (T) -> R): 
 inline fun <T> T.alsoIf(expression: Boolean, block: (T) -> Unit): T {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
-        returns() implies expression
         expression holdsIn block
     }
     if (expression) block(this)

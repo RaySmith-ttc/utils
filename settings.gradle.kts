@@ -16,4 +16,8 @@ dependencyResolutionManagement {
     repositories {
         mavenCentral()
     }
+
+    versionCatalogs {
+
+    }
 }
