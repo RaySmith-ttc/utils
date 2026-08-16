@@ -59,6 +59,10 @@ elements
   - `randomHexString()`
   - `String.encryptAesGcm()`
   - `String.decryptAesGcm()`
+- BigDecimal:
+  - `BigDecimal.isZero`
+  - `BigDecimal.eq()`
+  - `BigDecimal.neq()`
 - Date and Time Utils:
   - `timeZone` - property that depends on the `TIME_ZONE` environment variable (or property) or uses the system time 
 zone by default. Use in most of the date and time extensions.
