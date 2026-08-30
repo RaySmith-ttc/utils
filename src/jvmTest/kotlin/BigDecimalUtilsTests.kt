@@ -52,4 +52,30 @@ class BigDecimalUtilsTests {
         assertFalse(BigDecimal("0").neq(BigDecimal.ZERO))
         assertFalse(BigDecimal("123.456").neq(BigDecimal("123.4560")))
     }
+
+    @Test
+    fun iterableEq() {
+        val nullList: List<BigDecimal>? = null
+        assertTrue(nullList.eq(null))
+        assertTrue(listOf(BigDecimal("1.0"), BigDecimal("2.00")).eq(listOf(BigDecimal("1.000"), BigDecimal("2"))))
+        assertTrue(setOf(BigDecimal("0"), BigDecimal("1")).eq(listOf(BigDecimal("0.00"), BigDecimal("1.0"))))
+
+        assertFalse(listOf(BigDecimal("1"), BigDecimal("2")).eq(listOf(BigDecimal("1"), BigDecimal("3"))))
+        assertFalse(listOf(BigDecimal("1")).eq(listOf(BigDecimal("1"), BigDecimal("2"))))
+        assertFalse(nullList.eq(listOf(BigDecimal("1"))))
+        assertFalse(listOf(BigDecimal("1")).eq(null))
+    }
+
+    @Test
+    fun iterableNeq() {
+        val nullList: List<BigDecimal>? = null
+        assertTrue(listOf(BigDecimal("1"), BigDecimal("2")).neq(listOf(BigDecimal("1"), BigDecimal("3"))))
+        assertTrue(listOf(BigDecimal("1")).neq(listOf(BigDecimal("1"), BigDecimal("2"))))
+        assertTrue(nullList.neq(listOf(BigDecimal("1"))))
+        assertTrue(listOf(BigDecimal("1")).neq(null))
+
+        assertFalse(nullList.neq(null))
+        assertFalse(listOf(BigDecimal("1.0"), BigDecimal("2.00")).neq(listOf(BigDecimal("1.000"), BigDecimal("2"))))
+        assertFalse(setOf(BigDecimal("0"), BigDecimal("1")).neq(listOf(BigDecimal("0.00"), BigDecimal("1.0"))))
+    }
 }

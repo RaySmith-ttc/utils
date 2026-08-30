@@ -56,3 +56,29 @@ operator fun <T, I : Iterable<T>> I.div(other: T): List<T> {
         this.plus(other)
     }
 }
+
+/**
+ * Returns `true` if all elements match the given [predicate] with their index.
+ *
+ * Note that if the collection contains no elements, [allIndexed] returns `true`
+ * because there are no elements to violate the condition.
+ */
+inline fun <T> Iterable<T>.allIndexed(predicate: (index: Int, item: T) -> Boolean): Boolean {
+    if (this is Collection && isEmpty()) return true
+    forEachIndexed { index, item ->
+        if (!predicate(index, item)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if at least one element matches the given [predicate] with its index.
+ * Returns `false` if the collection is empty.
+ */
+inline fun <T> Iterable<T>.anyIndexed(predicate: (index: Int, item: T) -> Boolean): Boolean {
+    if (this is Collection && isEmpty()) return false
+    forEachIndexed { index, item ->
+        if (predicate(index, item)) return true
+    }
+    return false
+}
