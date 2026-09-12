@@ -78,4 +78,23 @@ class BigDecimalUtilsTests {
         assertFalse(listOf(BigDecimal("1.0"), BigDecimal("2.00")).neq(listOf(BigDecimal("1.000"), BigDecimal("2"))))
         assertFalse(setOf(BigDecimal("0"), BigDecimal("1")).neq(listOf(BigDecimal("0.00"), BigDecimal("1.0"))))
     }
+
+    @Test
+    fun maxTest() {
+        kotlin.test.assertEquals(BigDecimal("5"), ru.raysmith.utils.max(BigDecimal("5"), BigDecimal("3")))
+        kotlin.test.assertEquals(BigDecimal("5"), ru.raysmith.utils.max(BigDecimal("3"), BigDecimal("5")))
+        kotlin.test.assertEquals(BigDecimal("-1"), ru.raysmith.utils.max(BigDecimal("-1"), BigDecimal("-5")))
+        kotlin.test.assertEquals(BigDecimal("0.5"), ru.raysmith.utils.max(BigDecimal("0.5"), BigDecimal("0.2")))
+        kotlin.test.assertEquals(BigDecimal("1.00"), ru.raysmith.utils.max(BigDecimal("1.00"), BigDecimal("1.00")))
+    }
+
+    @Test
+    fun minTest() {
+        kotlin.test.assertEquals(BigDecimal("3"), ru.raysmith.utils.min(BigDecimal("5"), BigDecimal("3")))
+        kotlin.test.assertEquals(BigDecimal("3"), ru.raysmith.utils.min(BigDecimal("3"), BigDecimal("5")))
+        kotlin.test.assertEquals(BigDecimal("-5"), ru.raysmith.utils.min(BigDecimal("-1"), BigDecimal("-5")))
+        kotlin.test.assertEquals(BigDecimal("0.2"), ru.raysmith.utils.min(BigDecimal("0.5"), BigDecimal("0.2")))
+        kotlin.test.assertEquals(BigDecimal("1.00"), ru.raysmith.utils.min(BigDecimal("1.00"), BigDecimal("1.00")))
+    }
 }
+

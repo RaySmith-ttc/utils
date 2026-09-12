@@ -41,3 +41,13 @@ fun Iterable<BigDecimal>?.eq(other: Iterable<BigDecimal>?): Boolean =
  * If both iterables are `null`, returns `false`. If only one iterable is `null`, returns `true`.
  */
 fun Iterable<BigDecimal>?.neq(other: Iterable<BigDecimal>?): Boolean = !this.eq(other)
+
+/** Returns the greater of two [BigDecimal] values. */
+fun max(a: BigDecimal, b: BigDecimal): BigDecimal {
+    return if (a > b) a else b
+}
+
+/** Returns the smaller of two [BigDecimal] values. */
+fun min(a: BigDecimal, b: BigDecimal): BigDecimal {
+    return if (a < b) a else b
+}

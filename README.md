@@ -67,6 +67,11 @@ elements
   - `BigDecimal.neq()`
   - `Iterable<BigDecimal>.eq()`
   - `Iterable<BigDecimal>.neq()`
+  - `max()`
+  - `min()`
+  - `BigDecimalProgression`
+  - `BigDecimal.downTo()`
+  - `ClosedRange<BigDecimal>.step()` / `BigDecimalProgression.step()`
 - Date and Time Utils:
   - `timeZone` - property that depends on the `TIME_ZONE` environment variable (or property) or uses the system time 
 zone by default. Use in most of the date and time extensions.
